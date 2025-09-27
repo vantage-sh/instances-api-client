@@ -29,7 +29,7 @@ type EC2AllowedColumns =
     "memoryPerVcpu" |
     "GPU" |
     "GPUModel" |
-    "GPUModel" |
+    "GPUMemory" |
     "computeCapability" |
     "FPGA" |
     "ECUPerVcpu" |
