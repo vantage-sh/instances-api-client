@@ -17,6 +17,7 @@ export {
     RDSInstance,
     RedshiftInstance,
     Columns,
+    ReservedTerms,
 } from "./apiTypings";
 export {
     apiV1,

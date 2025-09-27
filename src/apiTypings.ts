@@ -182,38 +182,61 @@ type AzureAllowedColumns =
     "windowsReserved" |
     "windowsSpot";
 
+type AWSReservedTerms =
+    "yrTerm1Standard.noUpfront" |
+    "yrTerm1Standard.partialUpfront" |
+    "yrTerm1Standard.allUpfront" |
+    "yrTerm3Standard.noUpfront" |
+    "yrTerm3Standard.partialUpfront" |
+    "yrTerm3Standard.allUpfront" |
+    "yrTerm1Convertible.noUpfront" |
+    "yrTerm1Convertible.partialUpfront" |
+    "yrTerm1Convertible.allUpfront" |
+    "yrTerm3Convertible.noUpfront" |
+    "yrTerm3Convertible.partialUpfront" |
+    "yrTerm3Convertible.allUpfront";
+
+type AzureReservedTerms =
+    "yrTerm1Standard.allUpfront" |
+    "yrTerm3Standard.allUpfront" |
+    "yrTerm1Standard.hybridbenefit" |
+    "yrTerm3Standard.hybridbenefit";
+
 export type SupportedServices = {
     ec2: {
         columns: EC2AllowedColumns;
-        reservedTerms: "b";
+        reservedTerms: AWSReservedTerms;
         ecu: "ecu";
     };
     rds: {
         columns: RDSAllowedColumns;
-        reservedTerms: "d";
+        reservedTerms: AWSReservedTerms;
         ecu: "ecu";
     };
     cache: {
         columns: CacheAllowedColumns;
-        reservedTerms: "f";
+        reservedTerms: AWSReservedTerms;
         ecu: "ecu";
     };
     redshift: {
         columns: RedshiftAllowedColumns;
-        reservedTerms: "h";
+        reservedTerms: AWSReservedTerms;
         ecu: "ecu";
     };
     opensearch: {
         columns: OpensearchAllowedColumns;
-        reservedTerms: "j";
+        reservedTerms: AWSReservedTerms;
         ecu: "ecu";
     };
     azure: {
         columns: AzureAllowedColumns;
-        reservedTerms: "l";
+        reservedTerms: AzureReservedTerms;
         ecu: "acu";
     };
 };
 
 /** Get the columns for a specific service. */
 export type Columns<Key extends keyof SupportedServices> = SupportedServices[Key]["columns"];
+
+/** Get the reserved terms for a specific service. */
+export type ReservedTerms<Key extends keyof SupportedServices> = SupportedServices[Key]["reservedTerms"];
