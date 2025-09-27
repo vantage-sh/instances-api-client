@@ -147,7 +147,7 @@ function virtualInstances<
     };
 
     if (excludeAzure) {
-        // @ts-ignore: Some type hackery
+        // @ts-ignore: Some type hackery. Seems to break vs code but not tsup so is an ignore.
         delete all.azure;
     }
 
