@@ -208,3 +208,6 @@ export type SupportedServices = {
         reservedTerms: "l";
     };
 };
+
+/** Get the columns for a specific service. */
+export type Columns<Key extends keyof SupportedServices> = SupportedServices[Key]["columns"];

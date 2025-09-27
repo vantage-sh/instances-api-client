@@ -16,6 +16,7 @@ export {
     OpenSearchInstance,
     RDSInstance,
     RedshiftInstance,
+    Columns,
 } from "./apiTypings";
 export {
     apiV1,
