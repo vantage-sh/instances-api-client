@@ -86,7 +86,7 @@ export type VirtualInstancesRequestBody<
     costDuration?: "secondly" | "minutely" | "hourly" | "daily" | "weekly" | "monthly" | "annually";
 
     /** Defines the pricing unit for cost estimation. */
-    pricingUnit?: "instance" | "vcpu" | "ecu" | "memory";
+    pricingUnit?: "instance" | "vcpu" | "memory" | SupportedServices[ServiceKey]["ecu"];
 
     /** Defines the reserved terms for the virtual instances request. */
     reservedTerms?: SupportedServices[ServiceKey]["reservedTerms"];

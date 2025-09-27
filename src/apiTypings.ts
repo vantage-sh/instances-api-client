@@ -186,26 +186,32 @@ export type SupportedServices = {
     ec2: {
         columns: EC2AllowedColumns;
         reservedTerms: "b";
+        ecu: "ecu";
     };
     rds: {
         columns: RDSAllowedColumns;
         reservedTerms: "d";
+        ecu: "ecu";
     };
     cache: {
         columns: CacheAllowedColumns;
         reservedTerms: "f";
+        ecu: "ecu";
     };
     redshift: {
         columns: RedshiftAllowedColumns;
         reservedTerms: "h";
+        ecu: "ecu";
     };
     opensearch: {
         columns: OpensearchAllowedColumns;
         reservedTerms: "j";
+        ecu: "ecu";
     };
     azure: {
         columns: AzureAllowedColumns;
         reservedTerms: "l";
+        ecu: "acu";
     };
 };
 
