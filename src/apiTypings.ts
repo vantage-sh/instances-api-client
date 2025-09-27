@@ -19,29 +19,192 @@ export type AzureInstance = {
 export type ChinaRegions = string;
 export type GlobalRegions = string;
 
+type EC2AllowedColumns =
+    "prettyName" |
+    "instanceType" |
+    "family" |
+    "memory" |
+    "ECU" |
+    "vCPU" |
+    "memoryPerVcpu" |
+    "GPU" |
+    "GPUModel" |
+    "GPUModel" |
+    "computeCapability" |
+    "FPGA" |
+    "ECUPerVcpu" |
+    "physicalProcessor" |
+    "clockSpeedGhz" |
+    "intelAvx" |
+    "intelAvx2" |
+    "intelAvx512" |
+    "intelTurbo" |
+    "storage" |
+    "warmedUp" |
+    "trimSupport" |
+    "arch" |
+    "networkPerformance" |
+    "ebsBaselineBandwidth" |
+    "ebsBaselineThroughput" |
+    "ebsBaselineIops" |
+    "ebsMaxBandwidth" |
+    "ebsThroughput" |
+    "ebsIops" |
+    "ebsAsNvme" |
+    "maxIps" |
+    "maxEnis" |
+    "enhancedNetworking" |
+    "vpcOnly" |
+    "ipv6Support" |
+    "placementGroupSupport" |
+    "linuxVirtualizationTypes" |
+    "emr" |
+    "availabilityZones" |
+    "costOndemand" |
+    "costReserved" |
+    "costSpotMin" |
+    "costSpotMax" |
+    "costOndemandRhel" |
+    "costReservedRhel" |
+    "costSpotMinRhel" |
+    "costSpotMaxRhel" |
+    "costOndemandSles" |
+    "costReservedSles" |
+    "costSpotMinSles" |
+    "costSpotMaxSles" |
+    "costOndemandMswin" |
+    "costReservedMswin" |
+    "costSpotMinMswin" |
+    "costSpotMaxMswin" |
+    "costOndemandDedicated" |
+    "costReservedDedicated" |
+    "costOndemandMswinSQLWeb" |
+    "costReservedMswinSQLWeb" |
+    "costOndemandMswinSQL" |
+    "costReservedMswinSQL" |
+    "costOndemandMswinSQLEnterprise" |
+    "costReservedMswinSQLEnterprise" |
+    "costOndemandLinuxSQLWeb" |
+    "costReservedLinuxSQLWeb" |
+    "costOndemandLinuxSQL" |
+    "costReservedLinuxSQL" |
+    "costOndemandLinuxSQLEnterprise" |
+    "costReservedLinuxSQLEnterprise" |
+    "spotInterruptRate" |
+    "costEmr" |
+    "generation";
+
+type RDSAllowedColumns =
+    "name" |
+    "apiName" |
+    "memory" |
+    "storage" |
+    "vCPU" |
+    "networkPerf" |
+    "architecture" |
+    "costOnDemandPostgres" |
+    "costReservedPostgres" |
+    "costOnDemandMySQL" |
+    "costReservedMySQL" |
+    "costOnDemandSQLServerExpress" |
+    "costReservedSQLServerExpress" |
+    "costOnDemandSQLServerWeb" |
+    "costReservedSQLServerWeb" |
+    "costOnDemandSQLServerStandard" |
+    "costReservedSQLServerStandard" |
+    "costOnDemandSQLServerEnterprise" |
+    "costReservedSQLServerEnterprise" |
+    "costOnDemandAurora" |
+    "costReservedAurora" |
+    "costOnDemandAuroraIO" |
+    "costOnDemandMariaDB" |
+    "costReservedMariaDB" |
+    "costOnDemandOracleEnterprise" |
+    "costReservedOracleEnterprise" |
+    "ebsBaselineBandwidth" |
+    "ebsBaselineThroughput" |
+    "ebsBaselineIops" |
+    "ebsMaxBandwidth" |
+    "ebsMaxThroughput" |
+    "ebsIops";
+
+type CacheAllowedColumns =
+    "prettyName" |
+    "instanceType" |
+    "memory" |
+    "vCPU" |
+    "networkPerf" |
+    "costOnDemandRedis" |
+    "costReservedRedis" |
+    "costOnDemandMemcached" |
+    "costReservedMemcached" |
+    "costOnDemandValkey" |
+    "costReservedValkey" |
+    "generation";
+
+type RedshiftAllowedColumns =
+    "prettyName" |
+    "instanceType" |
+    "memory" |
+    "vCPU" |
+    "storage" |
+    "io" |
+    "ECU" |
+    "generation" |
+    "costOndemand" |
+    "costReserved";
+
+type OpensearchAllowedColumns =
+    "prettyName" |
+    "instanceType" |
+    "memory" |
+    "vCPU" |
+    "storage" |
+    "ECU" |
+    "costOndemand" |
+    "costReserved" |
+    "generation";
+
+type AzureAllowedColumns =
+    "prettyNameAzure" |
+    "instanceType" |
+    "memory" |
+    "vCPU" |
+    "memoryPerVcpu" |
+    "GPU" |
+    "size" |
+    "linuxOndemand" |
+    "linuxSavings" |
+    "linuxReserved" |
+    "linuxSpot" |
+    "windowsOndemand" |
+    "windowsSavings" |
+    "windowsReserved" |
+    "windowsSpot";
+
 export type SupportedServices = {
     ec2: {
-        columns: "a";
+        columns: EC2AllowedColumns;
         reservedTerms: "b";
     };
     rds: {
-        columns: "c";
+        columns: RDSAllowedColumns;
         reservedTerms: "d";
     };
     cache: {
-        columns: "e";
+        columns: CacheAllowedColumns;
         reservedTerms: "f";
     };
     redshift: {
-        columns: "g";
+        columns: RedshiftAllowedColumns;
         reservedTerms: "h";
     };
     opensearch: {
-        columns: "i";
+        columns: OpensearchAllowedColumns;
         reservedTerms: "j";
     };
     azure: {
-        columns: "k";
+        columns: AzureAllowedColumns;
         reservedTerms: "l";
     };
 };
