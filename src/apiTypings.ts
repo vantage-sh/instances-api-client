@@ -23,7 +23,67 @@ export type ChinaAWSRegions = "cn-north-1" | "cn-northwest-1" | "cn-north-1-pkx-
 export type GlobalAWSRegions = string;
 
 /** Defines the supported regions for global Azure region queries. */
-export type GlobalAzureRegions = string;
+export type GlobalAzureRegions = 
+    "asia-pacific-east" |
+    "asia-pacific-southeast" |
+    "australia-central" |
+    "australia-central-2" |
+    "australia-east" |
+    "australia-southeast" |
+    "brazil-south" |
+    "brazil-southeast" |
+    "canada-central" |
+    "canada-east" |
+    "central-india" |
+    "europe-north" |
+    "europe-west" |
+    "france-central" |
+    "france-south" |
+    "japan-east" |
+    "japan-west" |
+    "korea-central" |
+    "korea-south" |
+    "poland-central" |
+    "qatar-central" |
+    "south-india" |
+    "united-kingdom-south" |
+    "united-kingdom-west" |
+    "us-central" |
+    "us-east" |
+    "us-east-2" |
+    "us-north-central" |
+    "us-south-central" |
+    "us-west" |
+    "us-west-2" |
+    "us-west-central" |
+    "usgov-arizona" |
+    "usgov-texas" |
+    "usgov-virginia" |
+    "west-india" |
+    "austria-east" |
+    "belgium-central" |
+    "germany-north" |
+    "germany-west-central" |
+    "indonesia-central" |
+    "israel-central" |
+    "italy-north" |
+    "malaysia-west" |
+    "mexico-central" |
+    "new-zealand-north" |
+    "norway-east" |
+    "norway-west" |
+    "south-africa-north" |
+    "south-africa-west" |
+    "spain-central" |
+    "sweden-central" |
+    "sweden-south" |
+    "switzerland-north" |
+    "switzerland-west" |
+    "uae-central" |
+    "uae-north" |
+    "us-west-3" |
+    "chile-central" |
+    string;
 
 type EC2AllowedColumns =
     "prettyName" |
