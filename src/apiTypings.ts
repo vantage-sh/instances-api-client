@@ -241,8 +241,24 @@ export type SupportedServices = {
     };
 };
 
-/** Get the columns for a specific service. */
-export type Columns<Key extends keyof SupportedServices> = SupportedServices[Key]["columns"];
-
 /** Get the reserved terms for a specific service. */
 export type ReservedTerms<Key extends keyof SupportedServices> = SupportedServices[Key]["reservedTerms"];
+
+type RemapColumns<S extends string> = {
+    [K in S]: {
+        /** Defines the key of the column to show. */
+        key: K;
+
+        /** A filter to be applied to this column. */
+        filter?: string;
+
+        /**
+         * If set, defines the sorting order for this column. If true, the column will be sorted in descending order.
+         * If false, the column will be sorted in ascending order. If not set, no sorting will be applied.
+         */
+        sortDesc?: boolean;
+    };
+}[S];
+
+/** Gets the columns for a specific service. */
+export type Columns<Key extends keyof SupportedServices> = RemapColumns<SupportedServices[Key]["columns"]>;

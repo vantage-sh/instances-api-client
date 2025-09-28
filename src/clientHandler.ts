@@ -9,6 +9,8 @@ import type {
     GlobalAWSRegions,
     GlobalAzureRegions,
     SupportedServices,
+    Columns,
+    ReservedTerms,
 } from "./apiTypings";
 import {
     UnknownHTTPError,
@@ -54,22 +56,6 @@ function getInstanceObj(isChina: boolean) {
     };
 }
 
-type RemapColumns<S extends string> = {
-    [K in S]: {
-        /** Defines the key of the column to show. */
-        key: K;
-
-        /** A filter to be applied to this column. */
-        filter?: string;
-
-        /**
-         * If set, defines the sorting order for this column. If true, the column will be sorted in descending order.
-         * If false, the column will be sorted in ascending order. If not set, no sorting will be applied.
-         */
-        sortDesc?: boolean;
-    };
-}[S];
-
 export type VirtualInstancesRequestBody<
     Regions extends string,
     ServiceKey extends keyof SupportedServices,
@@ -78,7 +64,7 @@ export type VirtualInstancesRequestBody<
     region: Regions;
 
     /** Defines the columns to be included in the virtual instances request. */
-    columns: RemapColumns<SupportedServices[ServiceKey]["columns"]>[];
+    columns: Columns<ServiceKey>[];
 
     /** A search term to be applied to all columns. */
     globalSearch?: string;
@@ -90,7 +76,7 @@ export type VirtualInstancesRequestBody<
     pricingUnit?: "instance" | "vcpu" | "memory" | SupportedServices[ServiceKey]["ecu"];
 
     /** Defines the reserved term for the virtual instances request. */
-    reservedTerm?: SupportedServices[ServiceKey]["reservedTerms"];
+    reservedTerm?: ReservedTerms<ServiceKey>;
 
     /** The currency for cost estimation. Defaults to USD. */
     currency?: string;
