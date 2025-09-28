@@ -16,8 +16,9 @@ export type OpenSearchInstance = {
 export type AzureInstance = {
 };
 
-export type ChinaRegions = "cn-north-1" | "cn-northwest-1" | "cn-north-1-pkx-1";
-export type GlobalRegions = string;
+export type ChinaAWSRegions = "cn-north-1" | "cn-northwest-1" | "cn-north-1-pkx-1";
+export type GlobalAWSRegions = string;
+export type GlobalAzureRegions = string;
 
 type EC2AllowedColumns =
     "prettyName" |

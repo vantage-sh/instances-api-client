@@ -7,12 +7,13 @@ export {
     NotFoundError,
     RateLimitExceededError,
 } from "./apiErrors";
-export {
+export type {
     AzureInstance,
     CacheInstance,
-    ChinaRegions,
+    ChinaAWSRegions,
     EC2Instance,
-    GlobalRegions,
+    GlobalAWSRegions,
+    GlobalAzureRegions,
     OpenSearchInstance,
     RDSInstance,
     RedshiftInstance,
