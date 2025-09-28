@@ -304,20 +304,22 @@ export type SupportedServices = {
 /** Get the reserved terms for a specific service. */
 export type ReservedTerms<Key extends keyof SupportedServices> = SupportedServices[Key]["reservedTerms"];
 
+type RemappedColumn<K extends string> = {
+    /** Defines the key of the column to show. */
+    key: K;
+
+    /** A filter to be applied to this column. */
+    filter?: string;
+
+    /**
+     * If set, defines the sorting order for this column. If true, the column will be sorted in descending order.
+     * If false, the column will be sorted in ascending order. If not set, no sorting will be applied.
+     */
+    sortDesc?: boolean;
+};
+
 type RemapColumns<S extends string> = {
-    [K in S]: {
-        /** Defines the key of the column to show. */
-        key: K;
-
-        /** A filter to be applied to this column. */
-        filter?: string;
-
-        /**
-         * If set, defines the sorting order for this column. If true, the column will be sorted in descending order.
-         * If false, the column will be sorted in ascending order. If not set, no sorting will be applied.
-         */
-        sortDesc?: boolean;
-    };
+    [K in S]: RemappedColumn<K>;
 }[S];
 
 /** Gets the columns for a specific service. */
