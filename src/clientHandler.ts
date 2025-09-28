@@ -89,8 +89,8 @@ export type VirtualInstancesRequestBody<
     /** Defines the pricing unit for cost estimation. */
     pricingUnit?: "instance" | "vcpu" | "memory" | SupportedServices[ServiceKey]["ecu"];
 
-    /** Defines the reserved terms for the virtual instances request. */
-    reservedTerms?: SupportedServices[ServiceKey]["reservedTerms"];
+    /** Defines the reserved term for the virtual instances request. */
+    reservedTerm?: SupportedServices[ServiceKey]["reservedTerms"];
 
     /** The currency for cost estimation. Defaults to USD. */
     currency?: string;
