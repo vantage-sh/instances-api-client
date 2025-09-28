@@ -17,7 +17,7 @@ export type AzureInstance = {
 };
 
 /** Defines the supported regions for China based AWS region queries. */
-export type ChinaAWSRegions = "cn-north-1" | "cn-northwest-1" | "cn-north-1-pkx-1" | string;
+export type ChinaAWSRegions = "cn-north-1" | "cn-northwest-1" | "cn-north-1-pkx-1";
 
 /** Defines the supported regions for global AWS region queries. */
 export type GlobalAWSRegions =
@@ -55,8 +55,7 @@ export type GlobalAWSRegions =
     "ap-east-2" |
     "ap-southeast-5" |
     "ap-southeast-7" |
-    "mx-central-1" |
-    string;
+    "mx-central-1";
 
 /** Defines the supported regions for global Azure region queries. */
 export type GlobalAzureRegions = 
@@ -118,8 +117,7 @@ export type GlobalAzureRegions =
     "uae-central" |
     "uae-north" |
     "us-west-3" |
-    "chile-central" |
-    string;
+    "chile-central";
 
 type EC2AllowedColumns =
     "prettyName" |
