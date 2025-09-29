@@ -33,7 +33,7 @@ async function throw_(res: Response) {
     throw new UnknownHTTPError(res.status, res.statusText);
 }
 
-const toConvert = ["GPU", "memoryGib", "vcpu", "slicesPerNode"];
+const toConvert = ["GPU", "memoryGib", "vcpu", "slicesPerNode", "maxClients"];
 
 function remap(obj: any): any {
     if (obj === null || typeof obj !== "object") return obj;
@@ -77,7 +77,7 @@ function getInstanceObj<AWSRegions extends string>(isChina: boolean) {
     return {
         ec2: instanceGetter<EC2Instance>("ec2", isChina),
         rds: instanceGetter<RDSInstance>("rds", isChina),
-        cache: instanceGetter<CacheInstance>("cache", isChina),
+        cache: instanceGetter<CacheInstance<AWSRegions>>("cache", isChina),
         redshift: instanceGetter<RedshiftInstance<AWSRegions>>("redshift", isChina),
         opensearch: instanceGetter<OpenSearchInstance<AWSRegions>>("opensearch", isChina),
     };

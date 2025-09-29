@@ -6,15 +6,39 @@ export type EC2Instance = {
 export type RDSInstance = {
 };
 
-/** Defines the Cache instance object. */
-export type CacheInstance = {
-};
-
 type HalfRegionPricing = {
     ondemand: number;
     reserved?: {
         [K in AWSReservedTerms]?: number;
     };
+};
+
+type CachePlatforms = {
+    Redis?: HalfRegionPricing;
+    Memcached?: HalfRegionPricing;
+    Valkey?: HalfRegionPricing;
+    [key: string]: HalfRegionPricing | undefined;
+};
+
+type CachePricing<Regions extends string> = {
+    [key in Regions]?: CachePlatforms;
+} & {
+    [key: string]: CachePlatforms | undefined;
+};
+
+/** Defines the Cache instance object. */
+export type CacheInstance<Regions extends string> = {
+    currentGeneration: boolean;
+    instanceFamily: string;
+    instanceType: string;
+    maxClients: number;
+    memory: string;
+    networkPerformance: string;
+    prettyName: string;
+    pricing: CachePricing<Regions>;
+    regionCode: string;
+    regions: { [regionSlug: string]: string };
+    vcpu: number;
 };
 
 type HalfPricing<Regions extends string> = {
