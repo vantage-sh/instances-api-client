@@ -1,19 +1,89 @@
+/** Defines the EC2 instance object. */
 export type EC2Instance = {
 };
 
+/** Defines the RDS instance object. */
 export type RDSInstance = {
 };
 
+/** Defines the Cache instance object. */
 export type CacheInstance = {
 };
 
+/** Defines the Redshift instance object. */
 export type RedshiftInstance = {
 };
 
+/** Defines the OpenSearch instance object. */
 export type OpenSearchInstance = {
 };
 
+type AzurePlatformPricing = {
+    on_demand?: number;
+    spot_min?: number;
+    hybridbenefit?: number;
+    lowpriority?: number;
+    basic?: number;
+    "basic-spot"?: number;
+    reserved?: {
+        [K in AzureReservedTerms]?: number;
+    };
+};
+
+type AzurePlatforms = {
+    linux?: AzurePlatformPricing;
+    windows?: AzurePlatformPricing;
+    [key: string]: AzurePlatformPricing | undefined;
+};
+
+type AzurePricing = {
+    [key in GlobalAzureRegions]?: AzurePlatforms;
+} & {
+    [key: string]: AzurePlatforms | undefined;
+};
+
+/** Defines the Azure instance object. */
 export type AzureInstance = {
+    prettyName: string;
+    family: string;
+    category: string;
+    vcpu: number;
+    memory: number;
+    size: number;
+    GPU: number;
+    pricing: AzurePricing;
+    regions: { [regionSlug: string]: string };
+    prettyNameAzure: string;
+    instanceType: string;
+    storage: {
+        nvmeSsd: boolean;
+        devices: number;
+        size: number;
+        maxWriteDisks?: string;
+    };
+    ACU: number;
+    memoryMaintenance: boolean;
+    hypervGenerations: string;
+    arch: string[];
+    lowPriority: boolean;
+    premiumIo: boolean;
+    vmDeployment: string | null;
+    vcpusAvailable: number;
+    vcpusPercore: number;
+    iops: number | null;
+    readIo: number;
+    writeIo: number;
+    cachedDisk: number;
+    uncachedDisk: number;
+    uncachedDiskIo: number;
+    encryption: boolean;
+    capacitySupport: boolean;
+    acceleratedNetworking: boolean;
+    rdma: boolean;
+    ultraSsd: boolean;
+    hibernation: boolean | null;
+    trustedLaunch: boolean | null;
+    confidential: boolean;
 };
 
 /** Defines the supported regions for China based AWS region queries. */

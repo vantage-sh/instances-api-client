@@ -33,6 +33,28 @@ async function throw_(res: Response) {
     throw new UnknownHTTPError(res.status, res.statusText);
 }
 
+const toConvert = ["GPU"];
+
+function remap(obj: any): any {
+    if (obj === null || typeof obj !== "object") return obj;
+    if (Array.isArray(obj)) return obj.map(remap);
+    for (const key in obj) {
+        if (key === "pricing" || key === "regions") {
+            // Ignore pricing objects as they are nested and complex
+            continue;
+        }
+        const unsnake = key.replace(/[-_]([a-z])/g, (_, letter) => letter.toUpperCase());
+        if (unsnake !== key) {
+            obj[unsnake] = remap(obj[key]);
+            delete obj[key];
+        }
+        if (toConvert.includes(unsnake) && typeof obj[unsnake] === "string") {
+            const num = Number(obj[unsnake]);
+            if (!isNaN(num)) obj[unsnake] = num;
+        }
+    }
+}
+
 function instanceGetter<T>(service: string, isChina: boolean) {
     /** Gets a specific instance type for a service. */
     return async (instanceType: string, fetchClient?: typeof fetch) => {
@@ -42,7 +64,7 @@ function instanceGetter<T>(service: string, isChina: boolean) {
         }/${encodeURIComponent(instanceType)}`;
         const res = await fetcher(url);
         if (!res.ok) await throw_(res);
-        return res.json() as Promise<T>;
+        return remap(await res.json()) as T;
     };
 }
 
