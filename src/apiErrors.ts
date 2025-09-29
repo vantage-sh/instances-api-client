@@ -1,7 +1,10 @@
 export class APIError extends Error {}
 
 export class UnknownHTTPError extends APIError {
-    constructor(public status: number, public statusText: string) {
+    constructor(
+        public status: number,
+        public statusText: string,
+    ) {
         super(`Unknown HTTP error: ${status} ${statusText}`);
         this.name = "UnknownHTTPError";
     }

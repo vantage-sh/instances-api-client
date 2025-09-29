@@ -13,10 +13,7 @@ import type {
     ReservedTerms,
     RDSRemapItems,
 } from "./apiTypings";
-import {
-    UnknownHTTPError,
-    errors,
-} from "./apiErrors";
+import { UnknownHTTPError, errors } from "./apiErrors";
 
 async function throw_(res: Response) {
     const t = await res.text();
@@ -34,11 +31,19 @@ async function throw_(res: Response) {
     throw new UnknownHTTPError(res.status, res.statusText);
 }
 
-const toConvert = ["GPU", "memoryGib", "vcpu", "slicesPerNode", "maxClients", "memory", "normalizationSizeFactor"];
+const toConvert = [
+    "GPU",
+    "memoryGib",
+    "vcpu",
+    "slicesPerNode",
+    "maxClients",
+    "memory",
+    "normalizationSizeFactor",
+];
 
 function remap(obj: any, objRemapper?: (obj: any) => any): any {
     if (obj === null || typeof obj !== "object") return obj;
-    if (Array.isArray(obj)) return obj.map(item => remap(item, objRemapper));
+    if (Array.isArray(obj)) return obj.map((item) => remap(item, objRemapper));
     for (const key in obj) {
         if (key === "pricing" || key === "regions") {
             // Ignore pricing objects as they are nested and complex
@@ -49,7 +54,9 @@ function remap(obj: any, objRemapper?: (obj: any) => any): any {
             obj[key] = obj[key] === "Yes";
             continue;
         }
-        const unsnake = key.replace(/[-_]([a-z])/g, (_, letter) => letter.toUpperCase());
+        const unsnake = key.replace(/[-_]([a-z])/g, (_, letter) =>
+            letter.toUpperCase(),
+        );
         if (unsnake !== key) {
             obj[unsnake] = remap(obj[key]);
             delete obj[key];
@@ -123,8 +130,14 @@ function getInstanceObj<AWSRegions extends string>(isChina: boolean) {
         ec2: instanceGetter<EC2Instance<AWSRegions>>("ec2", isChina),
         rds: instanceGetter<RDSInstance<AWSRegions>>("rds", isChina),
         cache: instanceGetter<CacheInstance<AWSRegions>>("cache", isChina),
-        redshift: instanceGetter<RedshiftInstance<AWSRegions>>("redshift", isChina),
-        opensearch: instanceGetter<OpenSearchInstance<AWSRegions>>("opensearch", isChina),
+        redshift: instanceGetter<RedshiftInstance<AWSRegions>>(
+            "redshift",
+            isChina,
+        ),
+        opensearch: instanceGetter<OpenSearchInstance<AWSRegions>>(
+            "opensearch",
+            isChina,
+        ),
     };
 }
 
@@ -142,10 +155,21 @@ export type VirtualInstancesRequestBody<
     globalSearch?: string;
 
     /** Defines the time granularity for cost estimation. */
-    costDuration?: "secondly" | "minutely" | "hourly" | "daily" | "weekly" | "monthly" | "annually";
+    costDuration?:
+        | "secondly"
+        | "minutely"
+        | "hourly"
+        | "daily"
+        | "weekly"
+        | "monthly"
+        | "annually";
 
     /** Defines the pricing unit for cost estimation. */
-    pricingUnit?: "instance" | "vcpu" | "memory" | SupportedServices[ServiceKey]["ecu"];
+    pricingUnit?:
+        | "instance"
+        | "vcpu"
+        | "memory"
+        | SupportedServices[ServiceKey]["ecu"];
 
     /** Defines the reserved term for the virtual instances request. */
     reservedTerm?: ReservedTerms<ServiceKey>;
@@ -161,24 +185,43 @@ export type VirtualInstancesResult = {
     };
 };
 
-type VirtualInstancesCategoriesIncludingAzure<AWSRegions extends string, AzureRegions extends string> = {
+type VirtualInstancesCategoriesIncludingAzure<
+    AWSRegions extends string,
+    AzureRegions extends string,
+> = {
     [K in keyof SupportedServices]: K extends "azure"
-        ? (body: VirtualInstancesRequestBody<AzureRegions, K>) => Promise<VirtualInstancesResult>
-        : (body: VirtualInstancesRequestBody<AWSRegions, K>) => Promise<VirtualInstancesResult>;
+        ? (
+              body: VirtualInstancesRequestBody<AzureRegions, K>,
+          ) => Promise<VirtualInstancesResult>
+        : (
+              body: VirtualInstancesRequestBody<AWSRegions, K>,
+          ) => Promise<VirtualInstancesResult>;
 };
 
-type VirtualInstancesCategory<AWSRegions extends string, AzureRegions extends string, ExcludeAzure extends boolean> = ExcludeAzure extends true
-    ? Omit<VirtualInstancesCategoriesIncludingAzure<AWSRegions, AzureRegions>, "azure">
+type VirtualInstancesCategory<
+    AWSRegions extends string,
+    AzureRegions extends string,
+    ExcludeAzure extends boolean,
+> = ExcludeAzure extends true
+    ? Omit<
+          VirtualInstancesCategoriesIncludingAzure<AWSRegions, AzureRegions>,
+          "azure"
+      >
     : VirtualInstancesCategoriesIncludingAzure<AWSRegions, AzureRegions>;
 
 function virtualInstances<
     AWSRegions extends string,
     AzureRegions extends string,
     ExcludeAzure extends boolean,
->(apiKey: string, excludeAzure: ExcludeAzure, fetchClient?: typeof fetch): VirtualInstancesCategory<AWSRegions, AzureRegions, ExcludeAzure> {
+>(
+    apiKey: string,
+    excludeAzure: ExcludeAzure,
+    fetchClient?: typeof fetch,
+): VirtualInstancesCategory<AWSRegions, AzureRegions, ExcludeAzure> {
     const fetcher = fetchClient || fetch;
     const generateReq = async <ServiceKey extends keyof SupportedServices>(
-        service: ServiceKey, bodyRemainder: ServiceKey extends "azure"
+        service: ServiceKey,
+        bodyRemainder: ServiceKey extends "azure"
             ? VirtualInstancesRequestBody<AzureRegions, ServiceKey>
             : VirtualInstancesRequestBody<AWSRegions, ServiceKey>,
     ) => {
@@ -201,7 +244,10 @@ function virtualInstances<
         return fetchRes.json() as Promise<VirtualInstancesResult>;
     };
 
-    const all: VirtualInstancesCategoriesIncludingAzure<AWSRegions, AzureRegions> = {
+    const all: VirtualInstancesCategoriesIncludingAzure<
+        AWSRegions,
+        AzureRegions
+    > = {
         ec2: (body) => generateReq("ec2", body),
         rds: (body) => generateReq("rds", body),
         cache: (body) => generateReq("cache", body),
@@ -222,7 +268,11 @@ export const apiV1 = {
     china: {
         getInstance: getInstanceObj<ChinaAWSRegions>(true),
         virtualInstances: (apiKey: string, fetchClient?: typeof fetch) =>
-            virtualInstances<ChinaAWSRegions, string, true>(apiKey, true, fetchClient),
+            virtualInstances<ChinaAWSRegions, string, true>(
+                apiKey,
+                true,
+                fetchClient,
+            ),
     },
     global: {
         getInstance: {
@@ -230,6 +280,10 @@ export const apiV1 = {
             azure: instanceGetter<AzureInstance>("azure", false),
         },
         virtualInstances: (apiKey: string, fetchClient?: typeof fetch) =>
-            virtualInstances<GlobalAWSRegions, GlobalAzureRegions, false>(apiKey, false, fetchClient),
+            virtualInstances<GlobalAWSRegions, GlobalAzureRegions, false>(
+                apiKey,
+                false,
+                fetchClient,
+            ),
     },
 };
