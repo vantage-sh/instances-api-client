@@ -10,21 +10,38 @@ export type RDSInstance = {
 export type CacheInstance = {
 };
 
-/** Defines the Redshift instance object. */
-export type RedshiftInstance = {
-};
-
-type OpenSearchRegionPricing = {
+type HalfRegionPricing = {
     ondemand: number;
     reserved?: {
         [K in AWSReservedTerms]?: number;
     };
 };
 
-type OpenSearchPricing<Regions extends string> = {
-    [key in Regions]?: OpenSearchRegionPricing;
+type HalfPricing<Regions extends string> = {
+    [key in Regions]?: HalfRegionPricing;
 } & {
-    [key: string]: OpenSearchRegionPricing | undefined;
+    [key: string]: HalfRegionPricing | undefined;
+};
+
+/** Defines the Redshift instance object. */
+export type RedshiftInstance<Regions extends string> = {
+    currentGeneration: boolean;
+    ecu: string;
+    family: string;
+    instanceType: string;
+    io: string;
+    memory: string;
+    nodeRange: string;
+    prettyName: string;
+    pricing: HalfPricing<Regions>;
+    regionCode: string;
+    regions: { [regionSlug: string]: string };
+    slicesPerNode: number;
+    storage: string;
+    storageCapacity: string;
+    storagePerNode: string;
+    usageFamily: string;
+    vcpu: number;
 };
 
 /** Defines the OpenSearch instance object. */
@@ -39,7 +56,7 @@ export type OpenSearchInstance<Regions extends string> = {
     memoryGib: number;
     minEbs: string;
     prettyName: string;
-    pricing: OpenSearchPricing<Regions>;
+    pricing: HalfPricing<Regions>;
     regionCode: string;
     regions: { [regionSlug: string]: string };
     vcpu: number;
