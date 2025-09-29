@@ -13,6 +13,7 @@ import type {
     ReservedTerms,
     RDSRemapItems,
 } from "./apiTypings";
+import { getAllInstancesObj } from "./allInstancesHandler";
 import { UnknownHTTPError, errors } from "./apiErrors";
 
 async function throw_(res: Response) {
@@ -267,6 +268,10 @@ function virtualInstances<
 export const apiV1 = {
     china: {
         getInstance: getInstanceObj<ChinaAWSRegions>(true),
+        getAllInstances: getAllInstancesObj<ChinaAWSRegions, string, true>(
+            true,
+            "-cn.json",
+        ),
         virtualInstances: (apiKey: string, fetchClient?: typeof fetch) =>
             virtualInstances<ChinaAWSRegions, string, true>(
                 apiKey,
@@ -279,6 +284,11 @@ export const apiV1 = {
             ...getInstanceObj<GlobalAWSRegions>(false),
             azure: instanceGetter<AzureInstance>("azure", false),
         },
+        getAllInstances: getAllInstancesObj<
+            GlobalAWSRegions,
+            GlobalAzureRegions,
+            false
+        >(false, ".json"),
         virtualInstances: (apiKey: string, fetchClient?: typeof fetch) =>
             virtualInstances<GlobalAWSRegions, GlobalAzureRegions, false>(
                 apiKey,
