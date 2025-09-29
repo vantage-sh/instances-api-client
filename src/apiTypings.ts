@@ -2,15 +2,62 @@
 export type EC2Instance = {
 };
 
-/** Defines the RDS instance object. */
-export type RDSInstance = {
-};
+export type RDSRemapItems =
+    "postgres" |
+    "mysql" |
+    "sqlServerExpress" |
+    "sqlServerWeb" |
+    "sqlServerStandard" |
+    "sqlServerEnterprise" |
+    "auroraPgMySQL" |
+    "auroraIoOptimized" |
+    "mariadb" |
+    "oracleEnterprise";
 
 type HalfRegionPricing = {
     ondemand: number;
     reserved?: {
         [K in AWSReservedTerms]?: number;
     };
+};
+
+type RDSPricingPlatforms = {
+    [K in RDSRemapItems]?: HalfRegionPricing;
+} & {
+    [key: string]: HalfRegionPricing | undefined;
+};
+
+type RDSPricing<Regions extends string> = {
+    [key in Regions]?: RDSPricingPlatforms;
+} & {
+    [key: string]: RDSPricingPlatforms | undefined;
+};
+
+/** Defines the RDS instance object. */
+export type RDSInstance<Regions extends string> = {
+    arch: string;
+    currentGeneration: boolean;
+    ebsBaselineBandwidth: number;
+    ebsBaselineIops: number;
+    ebsBaselineThroughput: number;
+    ebsIops: number;
+    ebsMaxBandwidth: number;
+    ebsOptimized: boolean;
+    ebsThroughput: number;
+    instanceFamily: string;
+    instanceType: string;
+    instanceTypeFamily: string;
+    memory: number;
+    networkPerformance: string;
+    normalizationSizeFactor: number;
+    physicalProcessor: string;
+    prettyName: string;
+    pricing: RDSPricing<Regions>;
+    processorArchitecture: string;
+    regionCode: string;
+    regions: { [regionSlug: string]: string };
+    storage: string;
+    vcpu: number;
 };
 
 type CachePlatforms = {
@@ -32,7 +79,7 @@ export type CacheInstance<Regions extends string> = {
     instanceFamily: string;
     instanceType: string;
     maxClients: number;
-    memory: string;
+    memory: number;
     networkPerformance: string;
     prettyName: string;
     pricing: CachePricing<Regions>;
@@ -54,7 +101,7 @@ export type RedshiftInstance<Regions extends string> = {
     family: string;
     instanceType: string;
     io: string;
-    memory: string;
+    memory: number;
     nodeRange: string;
     prettyName: string;
     pricing: HalfPricing<Regions>;

@@ -11,6 +11,7 @@ import type {
     SupportedServices,
     Columns,
     ReservedTerms,
+    RDSRemapItems,
 } from "./apiTypings";
 import {
     UnknownHTTPError,
@@ -33,11 +34,11 @@ async function throw_(res: Response) {
     throw new UnknownHTTPError(res.status, res.statusText);
 }
 
-const toConvert = ["GPU", "memoryGib", "vcpu", "slicesPerNode", "maxClients"];
+const toConvert = ["GPU", "memoryGib", "vcpu", "slicesPerNode", "maxClients", "memory", "normalizationSizeFactor"];
 
-function remap(obj: any): any {
+function remap(obj: any, objRemapper?: (obj: any) => any): any {
     if (obj === null || typeof obj !== "object") return obj;
-    if (Array.isArray(obj)) return obj.map(remap);
+    if (Array.isArray(obj)) return obj.map(item => remap(item, objRemapper));
     for (const key in obj) {
         if (key === "pricing" || key === "regions") {
             // Ignore pricing objects as they are nested and complex
@@ -58,7 +59,43 @@ function remap(obj: any): any {
             if (!isNaN(num)) obj[unsnake] = num;
         }
     }
+    if (objRemapper) obj = objRemapper(obj);
+    return obj;
 }
+
+const rdsRemapping: { [platform: string]: RDSRemapItems } = {
+    "14": "postgres",
+    "2": "mysql",
+    "10": "sqlServerExpress",
+    "11": "sqlServerWeb",
+    "12": "sqlServerStandard",
+    "15": "sqlServerEnterprise",
+    "21": "auroraPgMySQL",
+    "211": "auroraIoOptimized",
+    "18": "mariadb",
+    "5": "oracleEnterprise",
+};
+
+function remapRdsPlatforms(obj: any): any {
+    for (const platform in obj) {
+        const remapping = rdsRemapping[platform];
+        if (remapping) {
+            obj[remapping] = obj[platform];
+            delete obj[platform];
+        }
+    }
+}
+
+function remapRds(obj: any): any {
+    for (const region in obj.pricing) {
+        remapRdsPlatforms(obj.pricing[region]);
+    }
+    return obj;
+}
+
+const objRemappers: { [service: string]: (obj: any) => any } = {
+    rds: remapRds,
+};
 
 function instanceGetter<T>(service: string, isChina: boolean) {
     /** Gets a specific instance type for a service. */
@@ -69,14 +106,14 @@ function instanceGetter<T>(service: string, isChina: boolean) {
         }/${encodeURIComponent(instanceType)}`;
         const res = await fetcher(url);
         if (!res.ok) await throw_(res);
-        return remap(await res.json()) as T;
+        return remap(await res.json(), objRemappers[service]) as T;
     };
 }
 
 function getInstanceObj<AWSRegions extends string>(isChina: boolean) {
     return {
         ec2: instanceGetter<EC2Instance>("ec2", isChina),
-        rds: instanceGetter<RDSInstance>("rds", isChina),
+        rds: instanceGetter<RDSInstance<AWSRegions>>("rds", isChina),
         cache: instanceGetter<CacheInstance<AWSRegions>>("cache", isChina),
         redshift: instanceGetter<RedshiftInstance<AWSRegions>>("redshift", isChina),
         opensearch: instanceGetter<OpenSearchInstance<AWSRegions>>("opensearch", isChina),
