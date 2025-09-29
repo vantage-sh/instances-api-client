@@ -93,8 +93,16 @@ function remapRds(obj: any): any {
     return obj;
 }
 
+function remapEc2(obj: any): any {
+    const generation = obj.generation === "current";
+    obj.currentGeneration = generation;
+    delete obj.generation;
+    return obj;
+}
+
 const objRemappers: { [service: string]: (obj: any) => any } = {
     rds: remapRds,
+    ec2: remapEc2,
 };
 
 function instanceGetter<T>(service: string, isChina: boolean) {
@@ -112,7 +120,7 @@ function instanceGetter<T>(service: string, isChina: boolean) {
 
 function getInstanceObj<AWSRegions extends string>(isChina: boolean) {
     return {
-        ec2: instanceGetter<EC2Instance>("ec2", isChina),
+        ec2: instanceGetter<EC2Instance<AWSRegions>>("ec2", isChina),
         rds: instanceGetter<RDSInstance<AWSRegions>>("rds", isChina),
         cache: instanceGetter<CacheInstance<AWSRegions>>("cache", isChina),
         redshift: instanceGetter<RedshiftInstance<AWSRegions>>("redshift", isChina),

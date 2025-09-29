@@ -1,5 +1,107 @@
+type EC2VPC = {
+    maxEnis: number;
+    ipsPerEni: number;
+};
+
+type EC2PlatformPricing = {
+    ondemand?: string;
+    reserved?: {
+        [K in AWSReservedTerms]?: string;
+    };
+    spot_min?: string;
+    spot_max?: string;
+    pct_interrupt?: string;
+    pct_savings_od?: number;
+    spot_avg?: string;
+};
+
+type EC2Platform =
+    "dedicated" |
+    "linux" |
+    "linuxSQL" |
+    "linuxSQLEnterprise" |
+    "linuxSQLWeb" |
+    "mswin" |
+    "mswinSQL" |
+    "mswinSQLEnterprise" |
+    "mswinSQLWeb" |
+    "rhel" |
+    "rhelSQL" |
+    "rhelSQLEnterprise" |
+    "rhelSQLWeb" |
+    "sles" |
+    "ubuntu";
+
+type EC2Platforms = {
+    [key in EC2Platform]?: EC2PlatformPricing;
+} & {
+    emr?: {
+        emr: string;
+    };
+} & {
+    [key: string]: EC2PlatformPricing | undefined;
+};
+
+type EC2Pricing<Regions extends string> = {
+    [key in Regions]?: EC2Platforms;
+} & {
+    [key: string]: EC2Platforms | undefined;
+};
+
+type EC2Storage = {
+    ssd: boolean;
+    trimSupport: boolean;
+    nvmeSsd: boolean;
+    storageNeedsInitialization: boolean;
+    includesSwapPartition: boolean;
+    devices: number;
+    size: number;
+    sizeUnit: string;
+};
+
 /** Defines the EC2 instance object. */
-export type EC2Instance = {
+export type EC2Instance<Regions extends string> = {
+    instanceType: string;
+    family: string;
+    vCPU: number;
+    memory: number;
+    prettyName: string;
+    arch: string[];
+    networkPerformance: string;
+    physicalProcessor: string;
+    generation: string;
+    currentGeneration: boolean;
+    GPU: number;
+    FPGA: number;
+    ebsAsNvme: boolean;
+    vpc: EC2VPC | null;
+    ebsOptimized: boolean;
+    ebsBaselineThroughput: number;
+    ebsBaselineIops: number;
+    ebsBaselineBandwidth: number;
+    ebsThroughput: number;
+    ebsIops: number;
+    ebsMaxBandwidth: number;
+    ECU: number;
+    intelAvx512: boolean | null;
+    intelAvx2: boolean | null;
+    intelAvx: boolean | null;
+    intelTurbo: boolean | null;
+    clockSpeedGhz: string | null;
+    enhancedNetworking: boolean;
+    pricing: EC2Pricing<Regions>;
+    regions: { [regionSlug: string]: string };
+    linuxVirtualizationTypes: string[];
+    vpcOnly: boolean;
+    basePerformance: number | null;
+    burstMinutes: number | null;
+    GPUModel: string | null;
+    computeCapability: number | null;
+    GPUMemory: string | null;
+    placementGroupSupport: boolean;
+    storage: EC2Storage | null;
+    emr: boolean;
+    ipv6Support: boolean;
 };
 
 export type RDSRemapItems =
