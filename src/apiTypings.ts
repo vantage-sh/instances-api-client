@@ -14,8 +14,35 @@ export type CacheInstance = {
 export type RedshiftInstance = {
 };
 
+type OpenSearchRegionPricing = {
+    ondemand: number;
+    reserved?: {
+        [K in AWSReservedTerms]?: number;
+    };
+};
+
+type OpenSearchPricing<Regions extends string> = {
+    [key in Regions]?: OpenSearchRegionPricing;
+} & {
+    [key: string]: OpenSearchRegionPricing | undefined;
+};
+
 /** Defines the OpenSearch instance object. */
-export type OpenSearchInstance = {
+export type OpenSearchInstance<Regions extends string> = {
+    currentGeneration: boolean;
+    ecu: string;
+    instanceFamily: string;
+    instanceType: string;
+    maxEbsGp2: string;
+    maxEbsGp3: string;
+    maxHttpPayload: string;
+    memoryGib: number;
+    minEbs: string;
+    prettyName: string;
+    pricing: OpenSearchPricing<Regions>;
+    regionCode: string;
+    regions: { [regionSlug: string]: string };
+    vcpu: number;
 };
 
 type AzurePlatformPricing = {

@@ -33,7 +33,7 @@ async function throw_(res: Response) {
     throw new UnknownHTTPError(res.status, res.statusText);
 }
 
-const toConvert = ["GPU"];
+const toConvert = ["GPU", "memoryGib", "vcpu"];
 
 function remap(obj: any): any {
     if (obj === null || typeof obj !== "object") return obj;
@@ -41,6 +41,11 @@ function remap(obj: any): any {
     for (const key in obj) {
         if (key === "pricing" || key === "regions") {
             // Ignore pricing objects as they are nested and complex
+            continue;
+        }
+        if (key === "currentGeneration") {
+            // Turn it into a boolean
+            obj[key] = obj[key] === "Yes";
             continue;
         }
         const unsnake = key.replace(/[-_]([a-z])/g, (_, letter) => letter.toUpperCase());
@@ -68,13 +73,13 @@ function instanceGetter<T>(service: string, isChina: boolean) {
     };
 }
 
-function getInstanceObj(isChina: boolean) {
+function getInstanceObj<AWSRegions extends string>(isChina: boolean) {
     return {
         ec2: instanceGetter<EC2Instance>("ec2", isChina),
         rds: instanceGetter<RDSInstance>("rds", isChina),
         cache: instanceGetter<CacheInstance>("cache", isChina),
         redshift: instanceGetter<RedshiftInstance>("redshift", isChina),
-        opensearch: instanceGetter<OpenSearchInstance>("opensearch", isChina),
+        opensearch: instanceGetter<OpenSearchInstance<AWSRegions>>("opensearch", isChina),
     };
 }
 
@@ -170,13 +175,13 @@ function virtualInstances<
 
 export const apiV1 = {
     china: {
-        getInstance: getInstanceObj(true),
+        getInstance: getInstanceObj<ChinaAWSRegions>(true),
         virtualInstances: (apiKey: string, fetchClient?: typeof fetch) =>
             virtualInstances<ChinaAWSRegions, string, true>(apiKey, true, fetchClient),
     },
     global: {
         getInstance: {
-            ...getInstanceObj(false),
+            ...getInstanceObj<GlobalAWSRegions>(false),
             azure: instanceGetter<AzureInstance>("azure", false),
         },
         virtualInstances: (apiKey: string, fetchClient?: typeof fetch) =>
