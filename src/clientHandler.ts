@@ -186,7 +186,7 @@ function virtualInstances<
 export const apiV1 = {
     china: {
         getInstance: getInstanceObj<ChinaAWSRegions>(true),
-        getAllInstances: getAllInstancesObj<ChinaAWSRegions, string, true>(
+        getAllInstances: getAllInstancesObj<ChinaAWSRegions, true>(
             true,
             "-cn.json",
         ),
@@ -202,11 +202,10 @@ export const apiV1 = {
             ...getInstanceObj<GlobalAWSRegions>(false),
             azure: instanceGetter<AzureInstance>("azure", false),
         },
-        getAllInstances: getAllInstancesObj<
-            GlobalAWSRegions,
-            GlobalAzureRegions,
-            false
-        >(false, ".json"),
+        getAllInstances: getAllInstancesObj<GlobalAWSRegions, false>(
+            false,
+            ".json",
+        ),
         virtualInstances: (apiKey: string, fetchClient?: typeof fetch) =>
             virtualInstances<GlobalAWSRegions, GlobalAzureRegions, false>(
                 apiKey,
