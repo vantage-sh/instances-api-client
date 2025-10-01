@@ -141,12 +141,7 @@ function jsonStream<T>(
                 );
                 if (endIndexOf !== -1) {
                     const chunk = buffer.slice(0, endIndexOf + 3);
-                    buffer = buffer.slice(endIndexOf + 4).trim();
-                    if (buffer === "") {
-                        buffer = "[";
-                    } else {
-                        buffer = "[" + buffer;
-                    }
+                    buffer = "[" + buffer.slice(endIndexOf + 4).trim();
                     page.push(...JSON.parse(chunk + "]"));
                     if (page.length >= 50) {
                         yield remap(page, objRemappers[svc]) as T[];
