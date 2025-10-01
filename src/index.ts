@@ -25,4 +25,16 @@ export {
     VirtualInstancesRequestBody,
     VirtualInstancesResult,
 } from "./clientHandler";
-export { asyncPageGeneratorToArray } from "./helpers";
+export {
+    asyncPageGeneratorToArray,
+    GlobalCacheInstance,
+    ChinaCacheInstance,
+    GlobalRedshiftInstance,
+    ChinaRedshiftInstance,
+    GlobalOpenSearchInstance,
+    ChinaOpenSearchInstance,
+    GlobalEC2Instance,
+    ChinaEC2Instance,
+    GlobalRDSInstance,
+    ChinaRDSInstance,
+} from "./helpers";
