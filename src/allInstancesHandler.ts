@@ -1,3 +1,4 @@
+import { NotFoundError, UnknownHTTPError } from "./apiErrors";
 import type {
     EC2Instance,
     RDSInstance,
@@ -89,6 +90,13 @@ export const objRemappers: { [service: string]: (obj: any) => any } = {
     ec2: remapEc2,
 };
 
+function throw_(res: Response) {
+    if (res.status === 404) {
+        throw new NotFoundError("Instance group not found");
+    }
+    throw new UnknownHTTPError(res.status, res.statusText);
+}
+
 function singlePageReadStream<T>(
     url: string,
     svc: string,
@@ -96,11 +104,7 @@ function singlePageReadStream<T>(
 ): AsyncGenerator<T[]> {
     return (async function* () {
         const res = await (fetchClient || fetch)(url);
-        if (!res.ok) {
-            throw new Error(
-                `Failed to fetch ${svc} instances from ${url}: ${res.status} ${res.statusText}`,
-            );
-        }
+        if (!res.ok) throw_(res);
         const j = await res.json();
         yield remap(j, objRemappers[svc]) as T[];
     })();
@@ -117,11 +121,7 @@ function jsonStream<T>(
 ): AsyncGenerator<T[]> {
     return (async function* () {
         const res = await (fetchClient || fetch)(url);
-        if (!res.ok) {
-            throw new Error(
-                `Failed to fetch ${svc} instances from ${url}: ${res.status} ${res.statusText}`,
-            );
-        }
+        if (!res.ok) throw_(res);
 
         const reader = res.body?.getReader();
         if (!reader) {
