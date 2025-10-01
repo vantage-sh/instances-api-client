@@ -146,7 +146,7 @@ function jsonStream<T>(
                         buffer = "[" + buffer;
                     }
                     page.push(...JSON.parse(chunk + "]"));
-                    if (page.length > 50) {
+                    if (page.length >= 50) {
                         yield remap(page, objRemappers[svc]) as T[];
                         page.length = 0;
                     }
