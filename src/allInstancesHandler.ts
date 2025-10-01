@@ -136,7 +136,7 @@ function jsonStream<T>(
             if (done) break;
             if (value) {
                 buffer += td.decode(value, { stream: true });
-                let endIndexOf = buffer.lastIndexOf(
+                const endIndexOf = buffer.lastIndexOf(
                     nlSpaceClosingCurlyBracketAndComma,
                 );
                 if (endIndexOf !== -1) {
