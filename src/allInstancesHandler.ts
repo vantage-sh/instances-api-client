@@ -108,6 +108,8 @@ function singlePageReadStream<T>(
 
 const nlSpaceClosingCurlyBracketAndComma = "\n },\n";
 
+const td = new TextDecoder();
+
 function jsonStream<T>(
     url: string,
     svc: string,
@@ -133,7 +135,7 @@ function jsonStream<T>(
             const { done, value } = await reader.read();
             if (done) break;
             if (value) {
-                buffer += new TextDecoder().decode(value, { stream: true });
+                buffer += td.decode(value, { stream: true });
                 let endIndexOf = buffer.lastIndexOf(
                     nlSpaceClosingCurlyBracketAndComma,
                 );
