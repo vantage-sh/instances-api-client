@@ -25,3 +25,4 @@ export {
     VirtualInstancesRequestBody,
     VirtualInstancesResult,
 } from "./clientHandler";
+export { asyncPageGeneratorToArray } from "./helpers";
