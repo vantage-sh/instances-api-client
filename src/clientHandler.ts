@@ -31,11 +31,13 @@ async function throw_(res: Response) {
     throw new UnknownHTTPError(res.status, res.statusText);
 }
 
+const BASE_URL = "https://instances-api.vantage.sh";
+
 function instanceGetter<T>(service: string, isChina: boolean) {
     /** Gets a specific instance type for a service. */
     return async (instanceType: string, fetchClient?: typeof fetch) => {
         const fetcher = fetchClient || fetch;
-        const url = `https://instances-api.vantage.sh/api/v1/${service}/${
+        const url = `${BASE_URL}/api/v1/${service}/${
             isChina ? "china" : "global"
         }/${encodeURIComponent(instanceType)}`;
         const res = await fetcher(url);
@@ -148,17 +150,14 @@ function virtualInstances<
             service,
             ...bodyRemainder,
         });
-        const fetchRes = await fetcher(
-            "https://instances-api.vantage.sh/api/v1/virtual-instances",
-            {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                    Authorization: `Bearer ${apiKey}`,
-                },
-                body,
+        const fetchRes = await fetcher(`${BASE_URL}/api/v1/virtual-instances`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${apiKey}`,
             },
-        );
+            body,
+        });
         if (!fetchRes.ok) await throw_(fetchRes);
         return fetchRes.json() as Promise<VirtualInstancesResult>;
     };
