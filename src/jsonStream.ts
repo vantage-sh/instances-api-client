@@ -1,13 +1,5 @@
 import { NotFoundError, UnknownHTTPError } from "./apiErrors";
-import type {
-    EC2Instance,
-    RDSInstance,
-    CacheInstance,
-    RedshiftInstance,
-    OpenSearchInstance,
-    RDSRemapItems,
-    AzureInstance,
-} from "./apiTypings";
+import type { RDSRemapItems } from "./apiTypings";
 
 const toConvert = [
     "GPU",
@@ -97,13 +89,17 @@ function throw_(res: Response) {
     throw new UnknownHTTPError(res.status, res.statusText);
 }
 
-function singlePageReadStream<T>(
+export function singlePageReadStream<T>(
     url: string,
     svc: string,
     fetchClient?: typeof fetch,
 ): AsyncGenerator<T[]> {
     return (async function* () {
-        const res = await (fetchClient || fetch)(url);
+        const res = await (fetchClient || fetch)(url, {
+            headers: {
+                "User-Agent": "instances-api-client-ts",
+            },
+        });
         if (!res.ok) throw_(res);
         const j = await res.json();
         yield remap(j, objRemappers[svc]) as T[];
@@ -114,13 +110,17 @@ const nlSpaceClosingCurlyBracketAndComma = "\n },\n";
 
 const td = new TextDecoder();
 
-function jsonStream<T>(
+export function jsonStream<T>(
     url: string,
     svc: string,
     fetchClient?: typeof fetch,
 ): AsyncGenerator<T[]> {
     return (async function* () {
-        const res = await (fetchClient || fetch)(url);
+        const res = await (fetchClient || fetch)(url, {
+            headers: {
+                "User-Agent": "instances-api-client-ts",
+            },
+        });
         if (!res.ok) throw_(res);
 
         const reader = res.body?.getReader();
@@ -158,86 +158,4 @@ function jsonStream<T>(
             yield remap(page, objRemappers[svc]) as T[];
         }
     })();
-}
-
-type AllGeneratorsIncludingAzure<AWSRegions extends string> = {
-    ec2: (
-        fetchClient?: typeof fetch,
-    ) => AsyncGenerator<EC2Instance<AWSRegions>[]>;
-    rds: (
-        fetchClient?: typeof fetch,
-    ) => AsyncGenerator<RDSInstance<AWSRegions>[]>;
-    cache: (
-        fetchClient?: typeof fetch,
-    ) => AsyncGenerator<CacheInstance<AWSRegions>[]>;
-    redshift: (
-        fetchClient?: typeof fetch,
-    ) => AsyncGenerator<RedshiftInstance<AWSRegions>[]>;
-    opensearch: (
-        fetchClient?: typeof fetch,
-    ) => AsyncGenerator<OpenSearchInstance<AWSRegions>[]>;
-    azure: (fetchClient?: typeof fetch) => AsyncGenerator<AzureInstance[]>;
-};
-
-type AllInstancesGenerators<
-    AWSRegions extends string,
-    ExcludeAzure extends boolean,
-> = ExcludeAzure extends true
-    ? Omit<AllGeneratorsIncludingAzure<AWSRegions>, "azure">
-    : AllGeneratorsIncludingAzure<AWSRegions>;
-
-export function getAllInstancesObj<
-    AWSRegions extends string,
-    ExcludeAzure extends boolean,
->(
-    isChina: ExcludeAzure,
-    urlSuffix: string,
-): AllInstancesGenerators<AWSRegions, ExcludeAzure> {
-    const baseUrl = "https://instances.vantage.sh/";
-    const generators: AllGeneratorsIncludingAzure<AWSRegions> = {
-        cache: (fetchClient?: typeof fetch) =>
-            singlePageReadStream<CacheInstance<AWSRegions>>(
-                `${baseUrl}cache/instances${urlSuffix}`,
-                "cache",
-                fetchClient,
-            ),
-        redshift: (fetchClient?: typeof fetch) =>
-            singlePageReadStream<RedshiftInstance<AWSRegions>>(
-                `${baseUrl}redshift/instances${urlSuffix}`,
-                "redshift",
-                fetchClient,
-            ),
-        opensearch: (fetchClient?: typeof fetch) =>
-            singlePageReadStream<OpenSearchInstance<AWSRegions>>(
-                `${baseUrl}opensearch/instances${urlSuffix}`,
-                "opensearch",
-                fetchClient,
-            ),
-
-        ec2: (fetchClient?: typeof fetch) =>
-            jsonStream<EC2Instance<AWSRegions>>(
-                `${baseUrl}instances${urlSuffix}`,
-                "ec2",
-                fetchClient,
-            ),
-        rds: (fetchClient?: typeof fetch) =>
-            jsonStream<RDSInstance<AWSRegions>>(
-                `${baseUrl}rds/instances${urlSuffix}`,
-                "rds",
-                fetchClient,
-            ),
-        azure: (fetchClient?: typeof fetch) =>
-            jsonStream<AzureInstance>(
-                `${baseUrl}azure/instances${urlSuffix}`,
-                "azure",
-                fetchClient,
-            ),
-    };
-
-    if (isChina) {
-        // @ts-ignore: Some type hackery. Seems to break vs code but not tsup so is an ignore.
-        delete generators.azure;
-    }
-
-    return generators;
 }

@@ -19,14 +19,11 @@ export type {
     RedshiftInstance,
     Columns,
     ReservedTerms,
+    GCPInstance,
+    GlobalGCPRegions,
 } from "./apiTypings";
-export {
-    apiV1,
-    VirtualInstancesRequestBody,
-    VirtualInstancesResult,
-} from "./clientHandler";
-export {
-    asyncPageGeneratorToArray,
+export { asyncPageGeneratorToArray } from "./helpers";
+export type {
     GlobalCacheInstance,
     ChinaCacheInstance,
     GlobalRedshiftInstance,
@@ -38,3 +35,4 @@ export {
     GlobalRDSInstance,
     ChinaRDSInstance,
 } from "./helpers";
+export * from "./APIV1Client";

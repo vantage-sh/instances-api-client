@@ -67,7 +67,7 @@ export type EC2Instance<Regions extends string> = {
     memory: number;
     prettyName: string;
     arch: string[];
-    networkPerformance: string;
+    networkPerformance: string | null;
     physicalProcessor: string;
     generation: string;
     currentGeneration: boolean;
@@ -150,7 +150,7 @@ export type RDSInstance<Regions extends string> = {
     instanceType: string;
     instanceTypeFamily: string;
     memory: number;
-    networkPerformance: string;
+    networkPerformance: string | null;
     normalizationSizeFactor: number;
     physicalProcessor: string;
     prettyName: string;
@@ -182,7 +182,7 @@ export type CacheInstance<Regions extends string> = {
     instanceType: string;
     maxClients: number;
     memory: number;
-    networkPerformance: string;
+    networkPerformance: string | null;
     prettyName: string;
     pricing: CachePricing<Regions>;
     regionCode: string;
@@ -301,6 +301,40 @@ export type AzureInstance = {
     hibernation: boolean | null;
     trustedLaunch: boolean | null;
     confidential: boolean;
+};
+
+type GCPPlatformPricing = {
+    ondemand?: string;
+    spot?: string;
+};
+
+type GCPPlatforms = {
+    linux?: GCPPlatformPricing;
+    windows?: GCPPlatformPricing;
+    [key: string]: GCPPlatformPricing | undefined;
+};
+
+type GCPPricing = {
+    [key in GlobalGCPRegions]?: GCPPlatforms;
+} & {
+    [key: string]: GCPPlatforms | undefined;
+};
+
+/** Defines the GCP instance object. */
+export type GCPInstance = {
+    prettyName: string;
+    instanceType: string;
+    family: string;
+    vCPU: number;
+    memory: number;
+    networkPerformance: string | null;
+    generation: string;
+    GPU: number;
+    pricing: GCPPricing;
+    regions: { [regionSlug: string]: string };
+    localSsd: boolean;
+    sharedCpu: boolean;
+    computeOptimized: boolean;
 };
 
 /** Defines the supported regions for China based AWS region queries. */
@@ -592,6 +626,22 @@ type AzureReservedTerms =
     | "yrTerm1Standard.hybridbenefit"
     | "yrTerm3Standard.hybridbenefit";
 
+export type GCPAllowedColumns =
+    | "prettyName"
+    | "instanceType"
+    | "memory"
+    | "vCPU"
+    | "memoryPerVcpu"
+    | "GPU"
+    | "networkPerformance"
+    | "generation"
+    | "localSsd"
+    | "sharedCpu"
+    | "linuxOndemand"
+    | "linuxSpot"
+    | "windowsOndemand"
+    | "windowsSpot";
+
 export type SupportedServices = {
     ec2: {
         columns: EC2AllowedColumns;
@@ -623,7 +673,61 @@ export type SupportedServices = {
         reservedTerms: AzureReservedTerms;
         ecu: "acu";
     };
+    gcp: {
+        columns: GCPAllowedColumns;
+        reservedTerms: null;
+        ecu: never;
+    };
 };
+
+export type GlobalGCPRegions =
+    | "africa-south1"
+    | "asia-east1"
+    | "asia-east2"
+    | "asia-northeast1"
+    | "asia-northeast2"
+    | "asia-northeast3"
+    | "asia-south1"
+    | "asia-south2"
+    | "asia-southeast1"
+    | "asia-southeast2"
+    | "australia-southeast1"
+    | "australia-southeast2"
+    | "europe-central2"
+    | "europe-north1"
+    | "europe-southwest1"
+    | "europe-west1"
+    | "europe-west10"
+    | "europe-west12"
+    | "europe-west2"
+    | "europe-west3"
+    | "europe-west4"
+    | "europe-west6"
+    | "europe-west8"
+    | "europe-west9"
+    | "me-central1"
+    | "me-central2"
+    | "me-west1"
+    | "multi-americas"
+    | "northamerica-northeast1"
+    | "northamerica-northeast2"
+    | "southamerica-east1"
+    | "southamerica-west1"
+    | "us-central1"
+    | "us-east1"
+    | "us-east4"
+    | "us-east5"
+    | "us-south1"
+    | "us-west1"
+    | "us-west2"
+    | "us-west3"
+    | "us-west4"
+    | "us-west8"
+    | "europe-north2"
+    | "northamerica-south1"
+    | "asia-southeast3"
+    | "europe-west5"
+    | "us-east7";
 
 /** Get the reserved terms for a specific service. */
 export type ReservedTerms<Key extends keyof SupportedServices> =
