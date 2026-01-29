@@ -102,6 +102,22 @@ export type EC2Instance<Regions extends string> = {
     storage: EC2Storage | null;
     emr: boolean;
     ipv6Support: boolean;
+    coremarkIterationsSecond: number | null;
+    gpuArchitectures: string[] | null;
+    gpuCurrentTempAvgCelsius: number | null;
+    ffmpegUsedCuda: boolean | null;
+    ffmpegSpeed: number | null;
+    ffmpegFPS: number | null;
+    gpuPowerDrawWattsAvg: number | null;
+    gpuClocks: string[];
+    numaNodeCount: number | null;
+    usesNumaArchitecture: boolean | null;
+    maxNumaDistance: number | null;
+    coreCountPerNumaNode: number | null;
+    threadCountPerNumaNode: number | null;
+    memoryPerNumaNodeMB: number | null;
+    l3PerNumaNodeMB: number | null;
+    l3Shared: boolean | null;
 };
 
 export type RDSRemapItems =
