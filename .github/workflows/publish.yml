@@ -1,0 +1,46 @@
+name: Publish
+on:
+  push:
+    tags:
+      - "v*"
+
+jobs:
+  npm-publish:
+    name: Publish to npm
+    runs-on: ubuntu-24.04-arm
+    permissions:
+      id-token: write
+      contents: write
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          registry-url: "https://registry.npmjs.org"
+
+      - name: Update npm
+        run: npm install -g npm@latest
+
+      - name: Publish to npm
+        run: cd typescript && npm ci && npm run build && npm publish
+
+  pypi-publish:
+    name: Publish to PyPI
+    runs-on: ubuntu-24.04-arm
+    permissions:
+      id-token: write
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.14"
+      - run: cd python && pip install build twine
+      - run: cd python && pip install -e ".[dev]"
+      - run: cd python && python -m build
+      - name: Publish release distributions to PyPI
+        uses: pypa/gh-action-pypi-publish@v1.13.0
+        with:
+          packages-dir: python/dist
