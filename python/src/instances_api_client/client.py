@@ -32,7 +32,7 @@ from instances_api_client.virtual_instances import (
     VirtualInstancesRequest,
 )
 
-BASE_URL = "https://instances-api.vantagesh.workers.dev"
+BASE_URL = "https://instances-api.vantage.sh"
 USER_AGENT = "instances-api-client-python"
 
 GLOBAL_SERVICES_JSON_URLS: dict[GlobalService, str] = {

@@ -21,7 +21,7 @@ import {
 import type { VirtualInstancesRequestBodyWithInfo } from "./virtualInstancesTypings";
 import { parse } from "node-html-parser";
 
-const BASE_URL = "https://instances-api.vantagesh.workers.dev";
+const BASE_URL = "https://instances-api.vantage.sh";
 
 async function throw_(res: Response) {
     const t = await res.text();
