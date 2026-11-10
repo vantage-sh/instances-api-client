@@ -8,6 +8,7 @@ Client libraries for the [Vantage Instances API](https://instances-api.vantage.s
 |----------|-----------|---------|
 | Python | [`python/`](./python) | `instances-api-client` on PyPI |
 | TypeScript | [`typescript/`](./typescript) | `@vantage-sh/instances-api-client` on npm |
+| Go | [`go/`](./go) | `github.com/vantage-sh/instances-api-client/go` |
 
 ## API Reference
 
@@ -454,6 +455,54 @@ Pass one of these as `reservedTerm` in a Virtual Instances request for EC2, RDS,
 ### GCP
 
 GCP does not support reserved terms.
+
+---
+
+## Go quickstart
+
+The Go client requires Go 1.26 or newer. To use a local checkout, add the import shown below, then run these commands from your application's module. Adjust the replacement path to point to the checkout's `go/` directory.
+
+```sh
+go mod edit -require=github.com/vantage-sh/instances-api-client/go@v0.0.0
+go mod edit -replace=github.com/vantage-sh/instances-api-client/go=../instances-api-client/go
+go mod tidy
+```
+
+### Look up EC2 family pricing
+
+```go
+package main
+
+import (
+	"context"
+	"fmt"
+	"log"
+	"time"
+
+	instancesapi "github.com/vantage-sh/instances-api-client/go"
+)
+
+func main() {
+	ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
+	defer cancel()
+
+	client := instancesapi.NewAPIV1Client("")
+	family, err := client.GetGlobalInstanceFamily(ctx, instancesapi.ServiceEC2, "m5")
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	for _, instance := range family {
+		ec2 := instance.(*instancesapi.EC2Instance)
+		linux, _ := ec2.Pricing[instancesapi.RegionAWSUSEast1].Group("linux")
+		if rate, ok := linux.Rate("ondemand"); ok {
+			fmt.Printf("%s %s/hour\n", ec2.InstanceType, rate)
+		}
+	}
+}
+```
+
+Family lookups and bulk feeds are public. Pass a Vantage API key to `NewAPIV1Client` for single-instance lookups and virtual queries. The [Go client guide](./go/README.md) covers global and China catalogs, streaming, virtual queries, and typed errors.
 
 ---
 
